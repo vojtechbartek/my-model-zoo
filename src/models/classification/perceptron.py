@@ -18,26 +18,12 @@ class Perceptron(Model):
         self,
         X: np.ndarray,
         y: np.ndarray,
-        max_iterations: int,
+        max_iterations: int = 100,
         visualize: bool = False,
         frame_rate: int = 2,
     ) -> Type["Perceptron"]:
         """
         Train model given training dataset.
-        Perceptron training algorithm is as follows:
-        Let X be a vector of K-dimensional points in space R^K and y be a vector
-        of associated labels {-1, +1}.
-        We then combine these two vectors into vector D, by appending the y_i
-        to the end of X_i (D_i = [X_i1, X_i2,..., X_iK, y_i]), this simplifies the
-        following training process:
-        We create a zero vector of dimension (K+1, 1) called Theta.
-        Now we iterate for up to max_iteration number of steps and at each step
-        we go through all D_i points and we try if the dot product between D_i and
-        Theta is greater than zero, if so, the classification is correct and we
-        continue to the next point D_i+1. If not, classification is incorrect and we
-        perform an update of our parameters Theta by adding the incorectly
-        classified vector D_i to Theta. We repeat this until we make no errors or
-        until we reach max_iterations
 
         Args:
             X (np.ndarray): numpy array of training points of shape (N, K).

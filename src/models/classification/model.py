@@ -5,9 +5,9 @@ from abc import ABC, abstractmethod
 
 class Model(ABC):
     @abstractmethod
-    def fit():
+    def fit(self, X, y):
         pass
 
     @abstractmethod
-    def predict():
+    def predict(self, X):
         pass
