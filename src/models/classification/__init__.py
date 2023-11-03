@@ -1,2 +1,1 @@
 from .perceptron import Perceptron
-

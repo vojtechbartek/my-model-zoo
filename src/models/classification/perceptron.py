@@ -1,24 +1,27 @@
-"""Implementation of the perceptron algorithm"""
-
-from .model import Model
-import numpy as np
 from typing import Type
+import numpy as np
+from .model import Model
 from src.utils.visualization import LinearDecisionBoundaryPlotter
-import matplotlib.pyplot as plt
-import time
+
 
 class Perceptron(Model):
-    
-    def __init__(self):
+    def __init__(self, learning_rate: float = 1):
+        self.learning_rate = learning_rate
         self.w = None
         self.b = None
+        self.steps = None
+        self.plotter = None
         self.X = None
         self.y = None
-        self.last_iteration = None
-        self.plotter = LinearDecisionBoundaryPlotter
 
-
-    def fit(self, X: np.ndarray, y: np.ndarray, max_iterations: int, visualize: bool=False, frame_rate:int=2) -> Type['Perceptron']:
+    def fit(
+        self,
+        X: np.ndarray,
+        y: np.ndarray,
+        max_iterations: int,
+        visualize: bool = False,
+        frame_rate: int = 2,
+    ) -> Type["Perceptron"]:
         """
         Train model given training dataset.
         Perceptron training algorithm is as follows:
@@ -35,7 +38,7 @@ class Perceptron(Model):
         perform an update of our parameters Theta by adding the incorectly
         classified vector D_i to Theta. We repeat this until we make no errors or
         until we reach max_iterations
-        
+
         Args:
             X (np.ndarray): numpy array of training points of shape (N, K).
             y (np.ndarray): numpy array of labels of shape (N, 1).
@@ -44,49 +47,43 @@ class Perceptron(Model):
         Returns:
             class object fitted (trained) on the given training set.
         """
-        K = X.shape[1]
+        self.w = np.zeros(X.shape[1])
+        self.b = 0
+        self.steps = 0
         self.X = X
         self.y = y
-        self.w = np.ones((K,))
-        self.b = 0
 
         if visualize:
             # initialize visualization plotter
-            self.plotter = self.plotter(X,y,frame_rate)
+            self.plotter = LinearDecisionBoundaryPlotter(X, y, frame_rate)
             self.plotter.plot_scatter_with_decision_boundary(self.w, self.b)
-            #plt.ion()
-            #plt.show()
-        
-        for i in range(max_iterations):
+
+        for _ in range(max_iterations):
             wrong_predictions = False
-            for x_,y_ in zip(X,y):
-                prediction = x_ @ self.w + self.b
-                if prediction * y_ <= 0:
+            for x_, y_ in zip(X, y):
+                if self.predict(x_) * y_ <= 0:
                     # update parameters
+                    self.w += self.learning_rate * y_ * x_
+                    self.b += self.learning_rate * y_
+
+                    self.steps += 1
                     wrong_predictions = True
-                    self.w += y_ * x_
-                    self.b += y_
                     if visualize:
                         self.plotter.update_plot(self.w, self.b)
-                
-            if wrong_predictions is False:
+
+            if not wrong_predictions:
                 # no mistake, end algorithm
-                #if visualize:
-                   # plt.ioff()
-                self.last_iteration = i
                 return self
-        
+
         # reached max_iterations but training is not done
-        #plt.ioff()
         return None
-        
+
     def predict(self, X: np.ndarray) -> np.ndarray:
         """
         Args:
             X (np.ndarray): numpy array of shape (N_, K). Points to classify.
-            
+
         Returns:
             np.ndarray: numpy array of shape (N_,). Predictions.
         """
-        return X @ self.w + self.b
-        
+        return np.sign(X @ self.w + self.b)

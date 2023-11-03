@@ -5,3 +5,5 @@ load_dotenv(find_dotenv())
 
 DATA_FILE_PATH = os.getenv("DATA_FILE_PATH")
 """Path to data folder"""
+
+FIG_SIZE = (8, 8)
