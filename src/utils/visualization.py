@@ -33,7 +33,7 @@ class LinearDecisionBoundaryPlotter:
             self.ax.scatter(
                 self.X[self.y.ravel() == label, 0],
                 self.X[self.y.ravel() == label, 1],
-                label=f"Label {label}",
+                label=f"Label {label}", color=["red", "blue"][max(label, 0)], #TODO fix
             )
 
         self.x_values = np.linspace(
